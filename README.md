@@ -49,3 +49,31 @@ OTHER_GOV	0.041009	317
 
 
 "Sponsor class varies 4%–19%; INDUSTRY (13.6%) terminates MORE than academic OTHER (10.2%) — opposite of the 'industry staying power' expectation, possibly because commercial sponsors cut unpromising trials fast. OTHER_GOV lowest at 4%. Small groups (INDIV, NIH) noisy."
+
+
+
+LEAKAGE
+
+terminated
+
+0    60.0
+
+1    19.0
+
+Name: enroll_count, dtype: float64
+
+
+
+
+"Termination rate is stable over 2010–2022 (~9-13%, no strong trend), so the temporal train/test split is valid — no major drift to worry about."
+
+
+1. Class balance — 11.1% terminated (imbalanced, confirmed).
+
+2. Phase — signal, 7% (NA) to 20% (PHASE2), medically sensible.
+
+3. Sponsor class — signal, but surprising direction (industry terminates more than academic).
+
+4. Enrollment — the leakage discovery, with the ESTIMATED-safe/ACTUAL-leaky proof.
+
+5. Year — stable, temporal split validated.
