@@ -116,7 +116,7 @@ inherently limited by the 11% base rate.
 
 ![Termination rate by sponsor class](notebooks/figures/termination_by_sponsor.png)
 
-![Enrollment leakage: ACTUAL leaks, ESTIMATED does not](notebooks/figures/enrollment_leakage.png)
+![Enrollment leakage: ACTUAL vs ESTIMATED](notebooks/figures/enrollment_leakage.png)
 
 ---
 
