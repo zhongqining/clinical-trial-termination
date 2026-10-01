@@ -19,14 +19,14 @@ This project predicts early termination from registration-time features alone.
 
 ## Data
 
-- **Source:** [ClinicalTrials.gov API v2](https://clinicaltrials.gov/api/v2/studies) — public, no key.
+- **Source:** [ClinicalTrials.gov API v2](https://clinicaltrials.gov/api/v2/studies).
 - **Pull:** 30,000 completed-or-terminated trials, cursor-paginated.
 - **Cleaning:** flattened deeply nested JSON into a flat table; recovered ~11,000 records
   initially lost to a date-parsing bug (year-month-only dates like `2013-01` that the parser
   silently dropped).
 - **Filters:** interventional trials only, started 2010–2022 (old enough to have resolved),
   with usable eligibility text.
-- **Final dataset:** 15,461 trials, **11.1% terminated** (an imbalanced target).
+- **Final dataset:** 15,461 trials, **11.1% terminated** (imbalanced classes).
 
 | Filter | Rows dropped |
 |---|---|
@@ -43,9 +43,9 @@ Several fields are only populated because a trial terminated, so using them give
 unrealistically high AUC and a useless model. The rule: **a feature is legitimate only if
 its value was knowable on the day the trial was registered.**
 
-The central trap was **enrollment**. In EDA, terminated trials showed a median enrollment gap of
+Central trap was **enrollment**. In EDA, terminated trials showed a median enrollment gap of
 19 vs. 60 for completed trials. This is a consequence of termination, not a
-predictor: a trial that terminates enrolls few patients because it stopped.
+predictor for termination. A trial that terminates enrolls few patients because it stopped.
 
 Splitting by `enrollment_type` made this precise:
 
@@ -54,7 +54,7 @@ Splitting by `enrollment_type` made this precise:
 | ACTUAL | 60 | **19** ← leaks |
 | ESTIMATED | 60 | **80** ← no leak |
 
-*Actual* enrollment is faulty and leaks; *estimated* (the target set at registration), on the other hand, is registered at the time of the trial registering. However, 98.5% of
+*Actual* enrollment is faulty and leaks; *estimated* enrollment, on the other hand, is registered at the time of the trial registering. However, 98.5% of
 records had only the ACTUAL value and not estimated value, so enrollment was removed entirely as a feature.
 
 I also excluded `whyStopped`, completion dates, results-posting flags, and status itself, all
@@ -64,7 +64,7 @@ of which encode the outcome.
 
 ## Modeling
 
-- **Split:** temporal — train on trials started before 2018, test on 2018+. Validated by EDA showing termination rate is stable across years.
+- **Split:** temporal - train on trials started before 2018, test on 2018+. Validated by EDA showing termination rate is stable across years.
 - **Imbalance:** class-balanced weighting (11% positive class).
 - **Models:** logistic-regression baseline, histogram gradient-boosting classifier.
 
@@ -86,7 +86,7 @@ Confirmed via permutation importance on features:
 1. **Eligibility criteria length** - a proxy for enrollment restrictiveness. More elaborate
    eligibility rules mean fewer eligible patients, raising the risk of insufficient accrual.
 2. **Whether healthy volunteers are accepted.**
-3. **Oncology** as a condition area — consistent with the known difficulty of completing cancer trials.
+3. **Oncology** as a condition area - consistent with the known difficulty of completing cancer trials.
 
 Note: sponsor class and phase showed strong *marginal* effects in EDA but contributed more
 modestly in the full model, likely because their signal overlaps with other features.
@@ -95,7 +95,7 @@ modestly in the full model, likely because their signal overlaps with other feat
 
 ## Threshold choice
 
-The probability scores were turned into decisions with a threshold tuned to a stated use case —
+The probability scores were turned into decisions with a threshold tuned to a stated use case -
 *flagging trials for review*, where missing a termination (false negative) is more egregious than an unnecessary review (false positive). Sweeping thresholds:
 
 | Threshold | Recall | Precision | Terminations caught |
