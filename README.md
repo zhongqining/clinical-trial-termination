@@ -37,7 +37,7 @@ This project predicts early termination from registration-time features alone.
 
 ---
 
-## Label leakage - the core of the project
+## Feature leakage
 
 Several fields are only populated because a trial terminated, so using them gives an
 unrealistically high AUC and a useless model. The rule: **a feature is legitimate only if
